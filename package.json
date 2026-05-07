@@ -2,7 +2,7 @@
   "name": "blue-moon-stage-zero",
   "version": "0.1.0",
   "private": true,
-  "description": "Stage 0 landing page and manual traction test for Blue Moon.",
+  "description": "Static-first Blue Moon MVP prototype for Vercel Hobby.",
   "scripts": {
     "dev": "python3 -m http.server 8000",
     "start": "python3 -m http.server 8000"

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contributing guide
+    url: https://github.com/Bowen-AI/Blue-Moon/blob/main/CONTRIBUTING.md
+    about: Read this before opening larger issues or pull requests.
+  - name: Support and sponsorship
+    url: https://github.com/Bowen-AI/Blue-Moon/blob/main/SUPPORT.md
+    about: Learn how to ask for help or support the project.

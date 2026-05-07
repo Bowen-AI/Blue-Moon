@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blue-moon.vercel.app/sitemap.xml

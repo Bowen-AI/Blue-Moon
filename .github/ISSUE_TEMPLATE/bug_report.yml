@@ -1,0 +1,43 @@
+name: Bug Report
+description: Report something broken, confusing, or hard to use.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve Blue Moon. Clear steps and screenshots are especially useful.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the bug or confusing behavior.
+      placeholder: I tried to join an event, but...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the exact steps that caused the issue.
+      placeholder: |
+        1. Go to...
+        2. Click...
+        3. See...
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Chrome on macOS, Safari on iPhone, etc.
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: I expected...
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or notes
+      description: Add screenshots, console errors, or anything else useful.

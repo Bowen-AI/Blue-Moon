@@ -1,0 +1,35 @@
+name: Trust And Safety Concern
+description: Flag a safety, privacy, moderation, or abuse risk.
+title: "[Trust/Safety]: "
+labels:
+  - trust-safety
+body:
+  - type: markdown
+    attributes:
+      value: Do not post private personal information. For urgent or sensitive issues, contact the project owner privately through GitHub.
+  - type: textarea
+    id: concern
+    attributes:
+      label: What is the concern?
+      placeholder: A public event could be misused because...
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Who could be affected?
+      placeholder: Participants, organizers, minors, neighborhoods, nonprofits...
+  - type: textarea
+    id: recommendation
+    attributes:
+      label: Recommended change
+      placeholder: Add a report button, hide this field, require review for...
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency
+      options:
+        - Low
+        - Medium
+        - High
+        - Sensitive/private

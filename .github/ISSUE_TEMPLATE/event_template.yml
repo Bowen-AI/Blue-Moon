@@ -1,0 +1,40 @@
+name: Event Template Idea
+description: Suggest a repeatable good-action event template.
+title: "[Template]: "
+labels:
+  - event-template
+body:
+  - type: input
+    id: template_name
+    attributes:
+      label: Template name
+      placeholder: River cleanup, school supply sorting, mutual aid drop-off...
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happens at this event?
+      placeholder: People meet at..., bring..., and spend about...
+    validations:
+      required: true
+  - type: input
+    id: capacity
+    attributes:
+      label: Suggested capacity
+      placeholder: 10, 20, 30...
+  - type: textarea
+    id: supplies
+    attributes:
+      label: Suggested supplies
+      placeholder: Gloves, bags, water, first-aid kit...
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety or permission notes
+      placeholder: Needs city permission, adult supervision, closed-toe shoes...
+  - type: textarea
+    id: proof
+    attributes:
+      label: Good proof or impact metrics
+      placeholder: Bags collected, meals packed, trees planted...

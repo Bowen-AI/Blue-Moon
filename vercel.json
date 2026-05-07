@@ -4,6 +4,16 @@
     {
       "source": "/events/:slug",
       "destination": "/event.html?id=:slug"
+    },
+    {
+      "source": "/members/:id",
+      "destination": "/member.html?id=:id"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/organizer-reminders",
+      "schedule": "0 15 * * *"
     }
   ]
 }
