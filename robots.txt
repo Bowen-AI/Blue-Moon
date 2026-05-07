@@ -1,4 +1,27 @@
 User-agent: *
 Allow: /
 
+# Public AI/search crawlers are allowed to read the static MVP.
+# For concise AI context, fetch /llms.txt or /llms-full.txt.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 Sitemap: https://blue-moon.vercel.app/sitemap.xml

@@ -442,6 +442,7 @@
         ? "https://schema.org/EventCompleted"
         : "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      isAccessibleForFree: true,
       image: [event.imageUrl],
       url: eventAbsoluteUrl(event),
       location: {
@@ -465,7 +466,11 @@
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
         url: eventAbsoluteUrl(event)
-      }
+      },
+      maximumAttendeeCapacity: event.maxParticipants || undefined,
+      remainingAttendeeCapacity: event.maxParticipants
+        ? Math.max(event.maxParticipants - (event.participantCount || 0), 0)
+        : undefined
     };
   }
 
@@ -489,15 +494,30 @@
         name: site.name,
         url: site.url,
         description: site.description,
-        image: site.image
+        image: site.image,
+        inLanguage: "en-US"
       },
       {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: site.name,
         url: site.url,
+        logo: site.icon,
         slogan: site.tagline,
         description: site.description
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        name: "Blue Moon public event data",
+        description: "Machine-readable seed event data for the Blue Moon static MVP.",
+        url: site.eventsJson,
+        license: `${site.url}/SUPPORT.md`,
+        creator: {
+          "@type": "Organization",
+          name: site.name,
+          url: site.url
+        }
       },
       {
         "@context": "https://schema.org",

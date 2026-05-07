@@ -42,7 +42,7 @@ This repo currently contains a static first-MVP prototype:
 - MVP search filters for city, ZIP, place, category, and time window
 - event templates for beach cleanups, park cleanups, food pantry packing, garden days, tree planting, neighborhood help, and custom events
 - suggested event capacity, prefilled by template and editable by the organizer
-- static SEO basics: crawlable metadata, Open Graph/Twitter tags, structured data, `robots.txt`, and `sitemap.xml`
+- static SEO and crawler basics: crawlable metadata, Open Graph/Twitter tags, favicon, manifest, structured data, `robots.txt`, `sitemap.xml`, `events.json`, and `llms.txt`
 - one completed-event proof example
 
 ## Who Can Contribute
@@ -160,9 +160,21 @@ SEO files currently use `https://blue-moon.vercel.app` as the production URL in:
 - `site.js`
 - `sitemap.xml`
 - `robots.txt`
+- `llms.txt`
+- `llms-full.txt`
+- `events.json`
+- `site.webmanifest`
 - canonical and Open Graph tags in `index.html` and `event.html`
 
 Update those values if the Vercel project or custom domain uses a different URL.
+
+Crawler-friendly entry points:
+
+- `/events.json` is the pure JSON event inventory for agents and integrations.
+- `/llms.txt` is the concise AI-readable site map.
+- `/llms-full.txt` is the longer AI-readable product and event context.
+- `/index.html.md` and `/events/*.md` are clean Markdown mirrors for simple AI/browser fetches.
+- `/favicon.svg` and `/site.webmanifest` provide the app/search icon metadata.
 
 ## License
 

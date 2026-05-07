@@ -1,5 +1,11 @@
 (function () {
   const page = document.querySelector("#member-page");
+  const site = window.BLUE_MOON_SITE || {
+    name: "Blue Moon",
+    url: "https://blue-moon.vercel.app",
+    description: "Blue Moon helps people find, create, join, and share local events for doing good.",
+    image: ""
+  };
 
   function escapeHtml(value) {
     return String(value)
@@ -44,6 +50,79 @@
     return labels.length ? labels.join(" · ") : "Blue Moon member";
   }
 
+  function setMeta(attribute, key, content) {
+    let meta = document.head.querySelector(`meta[${attribute}="${key}"]`);
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute(attribute, key);
+      document.head.append(meta);
+    }
+    meta.setAttribute("content", content);
+  }
+
+  function setCanonical(href) {
+    let canonical = document.head.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.rel = "canonical";
+      document.head.append(canonical);
+    }
+    canonical.href = href;
+  }
+
+  function injectJsonLd(id, data) {
+    let script = document.querySelector(`#${id}`);
+    if (!script) {
+      script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.id = id;
+      document.head.append(script);
+    }
+    script.textContent = JSON.stringify(data);
+  }
+
+  function profileUrl(profile) {
+    return `${site.url.replace(/\/$/, "")}/members/${encodeURIComponent(profile.id)}`;
+  }
+
+  function setProfileMetadata(profile, roleLabel) {
+    const title = `${profile.name} | Blue Moon`;
+    const description = `${profile.name} has joined ${profile.stats.joinedCount} events, organized ${profile.stats.organizedCount} events, and completed ${profile.stats.completedCount} good actions on Blue Moon.`;
+    const url = profileUrl(profile);
+    document.title = title;
+    setCanonical(url);
+    setMeta("name", "description", description);
+    setMeta("property", "og:title", title);
+    setMeta("property", "og:description", description);
+    setMeta("property", "og:url", url);
+    setMeta("name", "twitter:title", title);
+    setMeta("name", "twitter:description", description);
+    injectJsonLd("blue-moon-profile-structured-data", {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      url,
+      name: title,
+      description,
+      mainEntity: {
+        "@type": "Person",
+        name: profile.name,
+        description: roleLabel,
+        interactionStatistic: [
+          {
+            "@type": "InteractionCounter",
+            interactionType: "https://schema.org/JoinAction",
+            userInteractionCount: profile.stats.joinedCount
+          },
+          {
+            "@type": "InteractionCounter",
+            interactionType: "https://schema.org/OrganizeAction",
+            userInteractionCount: profile.stats.organizedCount
+          }
+        ]
+      }
+    });
+  }
+
   function renderGoodTypeCloud(goodTypes) {
     if (!goodTypes.length) return "";
     return `
@@ -69,10 +148,10 @@
   }
 
   function renderProfile(profile) {
-    document.title = `${profile.name} | Blue Moon`;
     const joinedMarkup = profile.joined.map(({ event }) => activityItem(event, "Joined")).join("");
     const organizedMarkup = profile.organized.map((event) => activityItem(event, "Organized")).join("");
     const roleLabel = profileRoleLabel(profile.sources);
+    setProfileMetadata(profile, roleLabel);
     page.innerHTML = `
       <section class="section member-profile-hero">
         <p class="eyebrow dark">Member profile</p>

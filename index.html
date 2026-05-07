@@ -4,20 +4,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Blue Moon helps people find, create, join, and share local events for cleanups, food help, community gardens, tree planting, and neighborhood support.">
-    <meta name="robots" content="index,follow">
+    <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+    <meta name="googlebot" content="index,follow,max-snippet:-1,max-image-preview:large">
     <meta name="theme-color" content="#10272b">
+    <meta name="color-scheme" content="light">
     <meta name="application-name" content="Blue Moon">
+    <meta name="author" content="Blue Moon contributors">
     <link rel="canonical" href="https://blue-moon.vercel.app/">
+    <link rel="alternate" hreflang="en" href="https://blue-moon.vercel.app/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/favicon.svg">
+    <link rel="mask-icon" href="/assets/blue-moon-mask-icon.svg" color="#10272b">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <link rel="alternate" type="application/json" href="/events.json" title="Blue Moon event data">
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Blue Moon AI-readable summary">
+    <link rel="alternate" type="text/markdown" href="/index.html.md" title="Blue Moon Markdown summary">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Blue Moon">
+    <meta property="og:locale" content="en_US">
     <meta property="og:title" content="Blue Moon | Once in a blue moon, do something good.">
     <meta property="og:description" content="Find, create, join, and share local events for doing good near you.">
     <meta property="og:url" content="https://blue-moon.vercel.app/">
     <meta property="og:image" content="https://images.unsplash.com/photo-1751646312140-42e2dd2b2b23?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=76&w=2200">
+    <meta property="og:image:alt" content="Volunteers collecting trash during a community cleanup.">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Blue Moon | Once in a blue moon, do something good.">
     <meta name="twitter:description" content="Find, create, join, and share local events for doing good near you.">
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1751646312140-42e2dd2b2b23?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=76&w=2200">
+    <meta name="twitter:image:alt" content="Volunteers collecting trash during a community cleanup.">
     <title>Blue Moon | Once in a blue moon, do something good.</title>
     <link rel="preconnect" href="https://images.unsplash.com">
     <link rel="stylesheet" href="styles.css?v=5">
@@ -107,7 +122,47 @@
           <button class="button light-outline" id="clear-filters" type="button">Clear</button>
         </form>
         <p class="filter-summary" id="filter-summary" aria-live="polite"></p>
-        <div class="event-grid" id="event-feed" aria-live="polite"></div>
+        <div class="event-grid" id="event-feed" aria-live="polite">
+          <article class="event-card">
+            <img src="https://images.unsplash.com/photo-1751646312140-42e2dd2b2b23?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=70&w=900" alt="Volunteers sorting trash collected during a beach cleanup.">
+            <div class="event-card-body">
+              <span class="category-pill">Beach cleanup</span>
+              <h3><a href="/events/santa-monica-beach-cleanup">Santa Monica Beach Cleanup</a></h3>
+              <div class="card-meta">
+                <span>Tower 24, Santa Monica Beach</span>
+                <span>Saturday, May 16, 2026 · 9:00 AM</span>
+                <span>12 joining · capacity 30</span>
+              </div>
+              <p>A relaxed Saturday cleanup near Tower 24. Bags and gloves are provided; bring water and sun protection.</p>
+            </div>
+          </article>
+          <article class="event-card">
+            <img src="https://images.unsplash.com/photo-1665395131429-e1ee267da39a?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=70&w=900" alt="A volunteer gardening in a sunny green space.">
+            <div class="event-card-body">
+              <span class="category-pill">Community garden</span>
+              <h3><a href="/events/echo-park-garden-morning">Echo Park Garden Morning</a></h3>
+              <div class="card-meta">
+                <span>Lemoyne Street Community Garden</span>
+                <span>Sunday, May 24, 2026 · 10:00 AM</span>
+                <span>7 joining · capacity 18</span>
+              </div>
+              <p>Help weed, mulch, and prep two shared beds for summer vegetables.</p>
+            </div>
+          </article>
+          <article class="event-card">
+            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=70&w=900" alt="Volunteers carrying boxes for food distribution.">
+            <div class="event-card-body">
+              <span class="category-pill">Food help</span>
+              <h3><a href="/events/venice-food-pantry-pack">Venice Food Pantry Pack</a></h3>
+              <div class="card-meta">
+                <span>Oakwood Recreation Center</span>
+                <span>Thursday, May 21, 2026 · 6:00 PM</span>
+                <span>16 joining · capacity 24</span>
+              </div>
+              <p>Pack pantry bags for Friday distribution. Come for the whole shift or the first hour.</p>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section class="section proof-band" id="proof">
@@ -386,10 +441,10 @@
       <p>Once in a blue moon, do something good.</p>
     </footer>
 
-    <script src="site.js?v=3"></script>
+    <script src="site.js?v=4"></script>
     <script src="events.js?v=6"></script>
     <script src="account.js?v=2"></script>
     <script src="member-utils.js?v=2"></script>
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=13"></script>
   </body>
 </html>

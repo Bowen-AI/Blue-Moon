@@ -1,0 +1,19 @@
+{
+  "name": "Blue Moon",
+  "short_name": "Blue Moon",
+  "description": "Find, create, join, and share local events for doing good.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7fbf7",
+  "theme_color": "#10272b",
+  "icons": [
+    {
+      "src": "/assets/blue-moon-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "lifestyle", "productivity"]
+}

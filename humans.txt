@@ -1,0 +1,9 @@
+Blue Moon
+
+Mission: Make it easy, social, and rewarding to do one good thing once in a while.
+
+Built as an open-source, static-first MVP.
+
+Core product loop: post an event, join it, do the real-world work, share proof, inspire the next person.
+
+Contact and contribution details live in README.md, CONTRIBUTING.md, and SUPPORT.md.

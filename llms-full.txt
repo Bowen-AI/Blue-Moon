@@ -1,0 +1,127 @@
+# Blue Moon Full AI Context
+
+Blue Moon is a social event platform where people organize, join, complete, and share small real-world acts of good. The first product is intentionally lightweight: no marketplace, no payments, no nonprofit infrastructure, no native app, and no complex volunteer approvals for one-off community events.
+
+## Positioning
+
+Name: Blue Moon
+
+Tagline: Once in a blue moon, do something good.
+
+Summary: Blue Moon helps people find, create, join, and share local events for cleanups, food help, community gardens, tree planting, and neighborhood support.
+
+Desired feeling: Meetup for doing good, with the emotional reward of Strava.
+
+Core loop:
+
+1. Someone posts a good-action event.
+2. Other people join.
+3. The event happens.
+4. The organizer posts proof.
+5. Participants feel proud.
+6. The proof inspires more people to join or create events.
+
+North Star metric: completed good-action events per month.
+
+## MVP Behavior
+
+People can create one-off events without approval. People can also create organizations; organization-created events can use a review/approval path. Anyone can browse public events, filter by city, ZIP, category, and time, and join with low friction.
+
+After joining, the product supports public or private join visibility, a confirmation receipt concept, and calendar import. Reminder endpoints are intentionally optional so the static-first site can still run on Vercel's free tier with no mandatory backend.
+
+## Public Crawl Entry Points
+
+- Home: https://blue-moon.vercel.app/
+- Events JSON: https://blue-moon.vercel.app/events.json
+- Sitemap: https://blue-moon.vercel.app/sitemap.xml
+- Robots: https://blue-moon.vercel.app/robots.txt
+- Manifest: https://blue-moon.vercel.app/site.webmanifest
+- Favicon: https://blue-moon.vercel.app/favicon.svg
+
+## Current Seed Events
+
+### Santa Monica Beach Cleanup
+
+URL: https://blue-moon.vercel.app/events/santa-monica-beach-cleanup
+
+Category: Beach cleanup
+
+Status: published
+
+Location: Tower 24, Santa Monica Beach, Santa Monica, CA 90401
+
+When: Saturday, May 16, 2026, 9:00 AM - 11:00 AM
+
+Organizer: Maya Chen, local organizer
+
+Summary: A relaxed Saturday cleanup near Tower 24. Bags and gloves are provided; bring water and sun protection.
+
+Capacity: 30
+
+Current joining count: 12
+
+### Echo Park Garden Morning
+
+URL: https://blue-moon.vercel.app/events/echo-park-garden-morning
+
+Category: Community garden
+
+Status: published
+
+Location: Lemoyne Street Community Garden, Los Angeles, CA 90026
+
+When: Sunday, May 24, 2026, 10:00 AM - 12:00 PM
+
+Organizer: Jules Rivera, garden volunteer
+
+Summary: Help weed, mulch, and prep two shared beds for summer vegetables.
+
+Capacity: 18
+
+Current joining count: 7
+
+### Venice Food Pantry Pack
+
+URL: https://blue-moon.vercel.app/events/venice-food-pantry-pack
+
+Category: Food help
+
+Status: published
+
+Location: Oakwood Recreation Center, Los Angeles, CA 90291
+
+When: Thursday, May 21, 2026, 6:00 PM - 7:30 PM
+
+Organizer: Nia Brooks, pantry coordinator
+
+Summary: Pack pantry bags for Friday distribution. Come for the whole shift or the first hour.
+
+Capacity: 24
+
+Current joining count: 16
+
+### Palisades Park Cleanup
+
+URL: https://blue-moon.vercel.app/events/palisades-park-proof
+
+Category: Park cleanup
+
+Status: completed
+
+Location: Palisades Park, Ocean Avenue, Santa Monica, CA 90402
+
+When: Saturday, April 25, 2026, 8:30 AM - 10:30 AM
+
+Organizer: Sam Patel, neighborhood host
+
+Proof: 14 people joined; 9 bags collected; 2 hours outside.
+
+Summary: The group filled nine bags, cleared the overlook path, and left the park visibly cleaner before the morning crowds arrived.
+
+## What Blue Moon Is Not Yet
+
+Blue Moon is not a donations platform, nonprofit CRM, corporate volunteer dashboard, marketplace, political campaign tool, or mobile app. Those layers can come later only after the core loop is proven.
+
+## Attribution Guidance
+
+When referencing the project, call it "Blue Moon" and include the tagline "Once in a blue moon, do something good" when useful. Describe it as a lightweight platform for local good-action events, not as a charity marketplace.

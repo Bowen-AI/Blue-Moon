@@ -163,6 +163,18 @@
     canonical.href = href;
   }
 
+  function setMarkdownAlternate(href) {
+    let alternate = document.head.querySelector('link[rel="alternate"][type="text/markdown"]');
+    if (!alternate) {
+      alternate = document.createElement("link");
+      alternate.rel = "alternate";
+      alternate.type = "text/markdown";
+      alternate.title = "Blue Moon event Markdown";
+      document.head.append(alternate);
+    }
+    alternate.href = href;
+  }
+
   function eventStructuredData(event) {
     return {
       "@context": "https://schema.org",
@@ -174,6 +186,7 @@
         ? "https://schema.org/EventCompleted"
         : "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      isAccessibleForFree: true,
       image: [event.imageUrl],
       url: eventAbsoluteUrl(event),
       location: {
@@ -197,7 +210,11 @@
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
         url: eventAbsoluteUrl(event)
-      }
+      },
+      maximumAttendeeCapacity: event.maxParticipants || undefined,
+      remainingAttendeeCapacity: event.maxParticipants
+        ? Math.max(event.maxParticipants - (event.participantCount || 0) - localJoinCount(event.id), 0)
+        : undefined
     };
   }
 
@@ -218,14 +235,17 @@
     const url = eventAbsoluteUrl(event);
     document.title = title;
     setCanonical(url);
+    setMarkdownAlternate(`${url}.md`);
     setMeta("name", "description", description);
     setMeta("property", "og:title", title);
     setMeta("property", "og:description", description);
     setMeta("property", "og:url", url);
     setMeta("property", "og:image", event.imageUrl || site.image);
+    setMeta("property", "og:image:alt", event.imageAlt || `${event.title} on Blue Moon`);
     setMeta("name", "twitter:title", title);
     setMeta("name", "twitter:description", description);
     setMeta("name", "twitter:image", event.imageUrl || site.image);
+    setMeta("name", "twitter:image:alt", event.imageAlt || `${event.title} on Blue Moon`);
     injectJsonLd("blue-moon-event-structured-data", eventStructuredData(event));
   }
 
