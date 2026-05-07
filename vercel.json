@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/events/:slug",
+      "destination": "/event.html?id=:slug"
+    }
+  ]
+}

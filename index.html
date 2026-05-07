@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Blue Moon is a social event platform for small real-world acts of good.">
+    <title>Blue Moon | Once in a blue moon, do something good.</title>
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Blue Moon home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Blue Moon</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#events">Events</a>
+        <a href="#organizations">Orgs</a>
+        <a href="#post">Post</a>
+        <a href="#waitlist">Early access</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-inner">
+          <p class="eyebrow">Local good actions, made easy</p>
+          <h1>Blue Moon</h1>
+          <p class="tagline">Once in a blue moon, do something good.</p>
+          <p class="hero-copy">Post a small public-good event, invite friends, show up, and share what happened afterward.</p>
+          <div class="hero-actions" aria-label="Main actions">
+            <a class="button primary" href="#post">Post an activity</a>
+            <a class="button light" href="#events">See upcoming events</a>
+          </div>
+        </div>
+        <a class="hero-peek" href="#what">What it is</a>
+      </section>
+
+      <section class="section intro-band" id="what">
+        <div class="section-grid">
+          <div>
+            <p class="eyebrow dark">The traction test</p>
+            <h2>Make doing one good thing feel social, easy, and worth sharing.</h2>
+          </div>
+          <div class="intro-copy">
+            <p>Blue Moon starts as a lightweight place to organize cleanups, community help, and local volunteering. The first version cares about a single loop: see a good action, join or create one, do it, post proof, inspire the next person.</p>
+            <div class="metric-row" aria-label="Stage zero targets">
+              <span><strong>10</strong> real events posted</span>
+              <span><strong>3-5</strong> completed events</span>
+              <span><strong>1</strong> proof post that spreads</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="events">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">Upcoming events</p>
+            <h2>Small actions people can just show up for.</h2>
+          </div>
+          <a class="text-link" href="#post">Post yours</a>
+        </div>
+        <div class="event-grid" id="event-feed" aria-live="polite"></div>
+      </section>
+
+      <section class="section proof-band" id="proof">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">Proof loop</p>
+            <h2>Completed events should feel good to share.</h2>
+          </div>
+        </div>
+        <div class="proof-layout">
+          <article class="proof-card" id="completed-card"></article>
+          <ol class="loop-list" aria-label="Blue Moon core loop">
+            <li><span>See</span> a clear local action.</li>
+            <li><span>Join</span> with low friction.</li>
+            <li><span>Do</span> the real-world work.</li>
+            <li><span>Post proof</span> with photos and impact.</li>
+            <li><span>Share</span> the card so another person starts.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section split-section org-section" id="organizations">
+        <div class="form-intro">
+          <p class="eyebrow dark">Organizations</p>
+          <h2>Create an org, then approve it once.</h2>
+          <p>Organizations get a lightweight approval step before they can post under an official name. One-off community activities do not need approval.</p>
+          <div class="pending-list" id="organization-list" aria-live="polite"></div>
+        </div>
+
+        <form class="form-panel" id="org-form">
+          <label>
+            Organization name
+            <input name="name" type="text" placeholder="Westside Cleanup Club" required>
+          </label>
+          <div class="form-row">
+            <label>
+              Contact name
+              <input name="contactName" type="text" autocomplete="name" required>
+            </label>
+            <label>
+              Contact email
+              <input name="email" type="email" autocomplete="email" required>
+            </label>
+          </div>
+          <label>
+            Website or social link
+            <input name="link" type="url" placeholder="https://example.org">
+          </label>
+          <label>
+            What does this org do?
+            <textarea name="description" rows="4" placeholder="A few words about the group and the kinds of activities it hosts." required></textarea>
+          </label>
+          <button class="button dark wide" type="submit">Create organization</button>
+          <p class="form-note" id="org-form-note" role="status"></p>
+        </form>
+      </section>
+
+      <section class="section split-section" id="post">
+        <div class="form-intro">
+          <p class="eyebrow dark">Create and join</p>
+          <h2>Post an activity for people to browse and join.</h2>
+          <p>One-off posts go live right away. Approved organizations can post under their org name after the org approval step above.</p>
+          <div class="pending-list" id="pending-events" aria-live="polite"></div>
+        </div>
+
+        <form class="form-panel" id="event-form">
+          <label>
+            Post as
+            <select name="postMode" id="post-mode" required>
+              <option value="one-off">One-off activity, no approval</option>
+              <option value="organization">Approved organization</option>
+            </select>
+          </label>
+          <label id="organization-field" hidden>
+            Approved organization
+            <select name="organizationId" id="organization-select" disabled>
+              <option value="">No approved organizations yet</option>
+            </select>
+          </label>
+          <label>
+            Your name
+            <input name="organizer" type="text" autocomplete="name" required>
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>
+            Event title
+            <input name="title" type="text" placeholder="Venice Beach Cleanup" required>
+          </label>
+          <div class="form-row">
+            <label>
+              Category
+              <select name="category" required>
+                <option value="">Choose one</option>
+                <option>Beach cleanup</option>
+                <option>Park cleanup</option>
+                <option>Food help</option>
+                <option>Community garden</option>
+                <option>Tree planting</option>
+                <option>Neighborhood support</option>
+              </select>
+            </label>
+            <label>
+              Date
+              <input name="date" type="date" required>
+            </label>
+          </div>
+          <label>
+            Location
+            <input name="location" type="text" placeholder="Santa Monica Pier north lot" required>
+          </label>
+          <label>
+            Short description
+            <textarea name="description" rows="4" placeholder="What should people know before they show up?" required></textarea>
+          </label>
+          <button class="button primary wide" type="submit">Post activity</button>
+          <p class="form-note" id="event-form-note" role="status"></p>
+        </form>
+      </section>
+
+      <section class="section waitlist-band" id="waitlist">
+        <div class="waitlist-copy">
+          <p class="eyebrow dark">Early access</p>
+          <h2>Help shape the first local beta.</h2>
+          <p>Join if you would post an event, attend one, or introduce Blue Moon to a local organizer.</p>
+        </div>
+        <form class="waitlist-form" id="waitlist-form">
+          <label>
+            Name
+            <input name="name" type="text" autocomplete="name" required>
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>
+            I want to
+            <select name="interest" required>
+              <option value="">Choose one</option>
+              <option>Attend events</option>
+              <option>Post events</option>
+              <option>Invite organizers</option>
+            </select>
+          </label>
+          <button class="button dark wide" type="submit">Join early access</button>
+          <p class="form-note" id="waitlist-form-note" role="status"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Blue Moon</p>
+      <p>Once in a blue moon, do something good.</p>
+    </footer>
+
+    <script src="events.js?v=2"></script>
+    <script src="app.js?v=2"></script>
+  </body>
+</html>
