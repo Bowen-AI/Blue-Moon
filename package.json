@@ -2,9 +2,14 @@
   "name": "blue-moon-stage-zero",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Static-first Blue Moon MVP prototype for Vercel Hobby.",
   "scripts": {
     "dev": "python3 -m http.server 8000",
-    "start": "python3 -m http.server 8000"
+    "start": "python3 -m http.server 8000",
+    "check": "npm run check:static && npm run check:browser",
+    "check:browser": "node scripts/browser-smoke.mjs",
+    "check:static": "node scripts/check.mjs",
+    "test": "npm run check"
   }
 }

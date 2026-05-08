@@ -32,9 +32,10 @@ This repo currently contains a static first-MVP prototype:
 - landing page
 - manually curated event feed
 - shareable event pages
-- local prototype forms for one-off event creation, organization creation, organization approval, joining events, and early access
+- local prototype forms for one-off event creation, organization review requests, joining events, and early access
 - local email/password accounts that show joined and organized events by matching the user's email
 - event social links for Instagram or another social page
+- event report paths for unsafe events, privacy issues, misleading details, abusive joins, and bad proof
 - a past-event showcase with share buttons for X, LinkedIn, Facebook, Threads, Instagram, TikTok, copy link, and native share
 - local member lookup by name or email
 - member profile pages showing community service joined, organized, completed, and type-of-good bubbles with event counts
@@ -86,6 +87,7 @@ Larger contribution areas:
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, issue, and pull request guidance.
+See [CHANGELOG.md](CHANGELOG.md) for release-readiness changes.
 
 Short version:
 
@@ -119,10 +121,13 @@ The default deployment is intentionally lightweight for Vercel's free Hobby plan
 - no dependency install step
 - no bundled images or uploads
 - static HTML/CSS/JS as the main experience
-- tiny optional API routes for email and roster reminders
+- tiny optional API routes for early access, email, trust/safety reports, and roster reminders
 - one daily cron job, which stays within Hobby's once-per-day cron rule
 
-By default, `site.js` has `backendEnabled: false`, so the browser does not call the email API. Set it to `true` only after the Resend and Supabase environment variables are configured.
+By default, `site.js` has `backendEnabled: false`, so the browser does not call the early-access, email, or report APIs. Set it to `true` only after the Resend and Supabase environment variables are configured.
+
+For the production database contract, start with [`supabase/migrations/202605080001_ga_schema.sql`](supabase/migrations/202605080001_ga_schema.sql). For deployment order, RLS expectations, operator setup, verification commands, and rollback steps, use [`docs/PRODUCTION_SETUP.md`](docs/PRODUCTION_SETUP.md).
+For supported event scope, report triage, review rules, and privacy handling, use [`docs/TRUST_AND_SAFETY.md`](docs/TRUST_AND_SAFETY.md).
 
 ## Run Locally
 
@@ -132,14 +137,60 @@ npm run dev
 
 Then open `http://localhost:8000`.
 
-The forms use `localStorage` so the prototype works without a backend. One-off events appear in the event feed immediately. Users can search by location text, ZIP, category, and time. Organizations can be created, approved in the local demo, and then used as the organizer for official organization events. The intended production path is to move the same flows into Next.js, Supabase, Supabase Storage, and Resend.
+Run the dependency-free validation suite with:
+
+```bash
+npm run check
+```
+
+The check suite runs static/API contract checks and a headless Chrome smoke test for the core browse, create, early access, join, trust/safety report, account, member profile, proof sharing, mobile, and accessibility-contract paths. In constrained local sandboxes where Chrome or localhost binding is unavailable, the browser smoke script skips with a warning; CI and `REQUIRE_BROWSER_SMOKE=1` treat that as a failure.
+
+The forms use `localStorage` so the prototype works without a backend. One-off events appear in the event feed immediately. Users can search by location text, ZIP, category, and time. Organization requests are saved as pending review; production approval must happen through a trusted operator path before an organization can publish as official. The intended production path is to move the same flows into Next.js, Supabase, Supabase Storage, and Resend.
 
 The account flow is also local-only for the prototype. It hashes the demo password in this browser and matches joined/organized events by email. Production should use Supabase Auth with server-side access controls.
 
-Joining an event works locally right now: the page stores the join, respects public/private name visibility, and generates an `.ics` calendar file with an event reminder. On Vercel, `/api/join` can send the email receipt through Resend when these environment variables are set:
+## Production Backend
 
+The first production backend contract is documented in [docs/PRODUCTION_SETUP.md](docs/PRODUCTION_SETUP.md). It includes the Supabase schema, RLS expectations, seed data, Vercel environment variables, Resend setup, smoke tests, rollback guidance, and common failure modes.
+
+Backend files:
+
+- [api/health.js](api/health.js)
+- [api/early-access.js](api/early-access.js)
+- [api/join.js](api/join.js)
+- [api/organizer-reminders.js](api/organizer-reminders.js)
+- [api/trust-report.js](api/trust-report.js)
+- [supabase/migrations/202605080001_ga_schema.sql](supabase/migrations/202605080001_ga_schema.sql)
+- [supabase/seed.sql](supabase/seed.sql)
+- [docs/TRUST_AND_SAFETY.md](docs/TRUST_AND_SAFETY.md)
+
+Do not enable `site.backendEnabled` until the Supabase migration, seed data, Resend sender, Vercel secrets, early-access capture, trust/safety report intake, and smoke tests are complete.
+
+Use `/api/health` for public API liveness. Use `/api/health?readiness=1` with `Authorization: Bearer <CRON_SECRET>` for protected production readiness, and add `&deep=1` to verify that Supabase exposes at least one published event through the safe public view.
+
+Joining an event works locally right now: the page stores the join, respects public/private name visibility, and generates an `.ics` calendar file with an event reminder. On Vercel, `/api/join` can save the join to Supabase and send the email receipt through Resend when these environment variables are set:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
 - `RESEND_API_KEY`
 - `EMAIL_FROM`
+
+For safety, the production join API verifies that the event exists as a published Supabase `events` row before it saves a participant or sends email. Supabase enforces duplicate-email and capacity rules in one backend function, the API rate-limits repeated join attempts, and receipt email plus calendar content are generated on the server instead of trusting browser-supplied HTML or `.ics` content.
+
+Early access works locally as a browser-only demo, but production should use `/api/early-access`. With Supabase configured, the route saves each request in `early_access_requests`; with `EARLY_ACCESS_NOTIFY_TO` plus Resend configured, it also emails the operator. That is the central place to see who asked for early access.
+
+Optional early access controls:
+
+- `EARLY_ACCESS_NOTIFY_TO`
+- `EARLY_ACCESS_RATE_LIMIT_WINDOW_SECONDS`
+- `EARLY_ACCESS_RATE_LIMIT_MAX`
+
+Event pages include a report form for unsafe details, privacy issues, misleading information, abusive joins, and proof concerns. In the local demo, reports are saved in this browser. With `backendEnabled: true`, `/api/trust-report` validates the target and reason, applies Supabase-backed rate limits, and saves an open row in `trust_reports` without logging reporter emails or report details.
+
+Optional trust report rate controls:
+
+- `TRUST_REPORT_RATE_LIMIT_WINDOW_SECONDS`
+- `TRUST_REPORT_RATE_LIMIT_MAX`
 
 Day-of email reminders need a database-backed scheduled job so the server can find who needs a reminder that morning. The production path is to save joins in Supabase and have a daily Vercel Cron Job call a reminder endpoint. Until that backend is connected, the calendar file provides the day-of reminder after the user imports it.
 
@@ -147,11 +198,15 @@ Organizer roster emails are wired for the backend path too. `/api/join` can save
 
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
 - `CRON_SECRET`
 
-The reminder endpoint expects `events` to include `id`, `title`, `location_name`, `start_time`, `organizer_email`, and `status`; it expects `event_participants` to include `event_id`, `name`, `email`, `visibility`, `status`, and `joined_at`.
+The reminder endpoint expects `events` to include `id`, `title`, `location_name`, `start_time`, `organizer_email`, and `status`; it expects `event_participants` to include `event_id`, `name`, `email`, `visibility`, `status`, and `joined_at`. The Supabase migration in this repo defines those fields, RLS policies, safe public views, rate-limit storage, duplicate join protection, and capacity-aware join admission.
 
 Until Supabase is connected, the static localStorage demo cannot send scheduled roster emails because the server cannot see browser-only joins.
+
+The reminder endpoint refuses to send configured roster emails unless `CRON_SECRET` is present and the request uses `Authorization: Bearer <CRON_SECRET>`.
 
 ## SEO URL
 

@@ -224,7 +224,7 @@
         <div class="form-intro">
           <p class="eyebrow dark">Organizations</p>
           <h2>Create an organization profile.</h2>
-          <p>Organizations can request approval before creating events under an official name. One-off community events can be created right away.</p>
+          <p>Organizations can request review before creating events under an official name. A maintainer must approve the organization before it can publish as official.</p>
           <div class="pending-list" id="organization-list" aria-live="polite"></div>
         </div>
 
@@ -260,7 +260,7 @@
         <div class="form-intro">
           <p class="eyebrow dark">Create an event</p>
           <h2>Create an event people can browse and join.</h2>
-          <p>One-off events go live right away. Approved organizations can post under their organization name.</p>
+          <p>One-off events can be tested in this browser. Approved organizations can post under their organization name after maintainer review.</p>
           <div class="pending-list" id="pending-events" aria-live="polite"></div>
         </div>
 
@@ -281,7 +281,7 @@
           <label>
             Create as
             <select name="postMode" id="post-mode" required>
-              <option value="one-off">One-off event, no approval</option>
+              <option value="one-off">One-off community event</option>
               <option value="organization">Approved organization</option>
             </select>
           </label>
@@ -429,6 +429,10 @@
               <option>Create events</option>
               <option>Invite organizers</option>
             </select>
+          </label>
+          <label class="bot-field" aria-hidden="true">
+            Website
+            <input name="website" type="text" autocomplete="off" tabindex="-1">
           </label>
           <button class="button dark wide" type="submit">Join early access</button>
           <p class="form-note" id="waitlist-form-note" role="status"></p>

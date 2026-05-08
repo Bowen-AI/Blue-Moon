@@ -3,6 +3,7 @@
   const page = document.querySelector("#event-page");
   const joinsStorageKey = "blueMoonJoins";
   const submissionsStorageKey = "blueMoonEventSubmissions";
+  const trustReportsStorageKey = "blueMoonTrustReports";
   const site = window.BLUE_MOON_SITE || {
     name: "Blue Moon",
     url: "https://blue-moon.vercel.app",
@@ -10,7 +11,6 @@
     image: "",
     backendEnabled: false
   };
-
   const categoryImages = {
     "Beach cleanup": {
       imageUrl: "https://images.unsplash.com/photo-1751646312140-42e2dd2b2b23?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=70&w=1800",
@@ -53,6 +53,18 @@
 
   function writeJoins(joins) {
     localStorage.setItem(joinsStorageKey, JSON.stringify(joins));
+  }
+
+  function readTrustReports() {
+    try {
+      return JSON.parse(localStorage.getItem(trustReportsStorageKey)) || [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeTrustReports(reports) {
+    localStorage.setItem(trustReportsStorageKey, JSON.stringify(reports));
   }
 
   function normalizeEmail(value) {
@@ -369,41 +381,9 @@
     return `data:text/calendar;charset=utf-8,${encodeURIComponent(createCalendarFile(event, join))}`;
   }
 
-  function receiptText(event, join) {
-    return [
-      `You're joining ${event.title}.`,
-      "",
-      `Date: ${event.dateLabel}`,
-      `Time: ${event.timeLabel}`,
-      `Location: ${event.locationName}`,
-      `Organizer: ${event.organizer}`,
-      `Visibility: ${join.visibility === "public" ? "Public" : "Private"}`,
-      `Day-of reminder: ${join.reminderOptIn ? "Requested" : "Off"}`,
-      "",
-      event.summary,
-      "",
-      `Event link: ${currentShareUrl(event.id)}`
-    ].join("\n");
-  }
-
-  function receiptHtml(event, join) {
-    return `
-      <p>You're joining <strong>${escapeHtml(event.title)}</strong>.</p>
-      <ul>
-        <li><strong>Date:</strong> ${escapeHtml(event.dateLabel)}</li>
-        <li><strong>Time:</strong> ${escapeHtml(event.timeLabel)}</li>
-        <li><strong>Location:</strong> ${escapeHtml(event.locationName)}</li>
-        <li><strong>Organizer:</strong> ${escapeHtml(event.organizer)}</li>
-        <li><strong>Visibility:</strong> ${join.visibility === "public" ? "Public" : "Private"}</li>
-      </ul>
-      <p>${escapeHtml(event.summary)}</p>
-      <p><a href="${escapeHtml(currentShareUrl(event.id))}">Open the event page</a></p>
-    `;
-  }
-
   async function sendJoinReceipt(event, join) {
     if (!site.backendEnabled) {
-      return { emailSent: false, backendSkipped: true };
+      return { ok: true, emailSent: false, backendSkipped: true };
     }
 
     try {
@@ -415,13 +395,6 @@
         body: JSON.stringify({
           event: {
             id: event.id,
-            title: event.title,
-            dateLabel: event.dateLabel,
-            timeLabel: event.timeLabel,
-            locationName: event.locationName,
-            organizer: event.organizer,
-            organizerEmail: event.organizerEmail || "",
-            summary: event.summary,
             url: currentShareUrl(event.id)
           },
           join: {
@@ -429,25 +402,86 @@
             name: join.name,
             email: join.email,
             visibility: join.visibility,
-            reminderOptIn: join.reminderOptIn
-          },
-          receipt: {
-            subject: `You're joining ${event.title}`,
-            text: receiptText(event, join),
-            html: receiptHtml(event, join)
-          },
-          calendar: {
-            filename: calendarFilename(event),
-            content: createCalendarFile(event, join)
+            reminderOptIn: join.reminderOptIn,
+            website: join.website || ""
           }
         })
       });
 
-      if (!response.ok) return { emailSent: false };
-      return response.json();
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        return {
+          ok: false,
+          emailSent: false,
+          ...result
+        };
+      }
+      return {
+        ok: true,
+        ...result
+      };
     } catch (error) {
-      return { emailSent: false };
+      return { ok: false, emailSent: false, error: "network_error" };
     }
+  }
+
+  function joinErrorMessage(error) {
+    if (error === "duplicate_join") return "That email is already on the list for this event.";
+    if (error === "event_full") return "This event is full.";
+    if (error === "rate_limited") return "Too many join attempts. Please wait a few minutes and try again.";
+    if (error === "bot_detected") return "We could not save this join. Please try again.";
+    if (error === "event_not_found") return "This event is not accepting joins right now.";
+    if (error === "email_send_failed") return "You're on the list, but the email receipt could not be sent.";
+    return "We could not save this join. Please try again.";
+  }
+
+  async function sendTrustReport(event, report) {
+    if (!site.backendEnabled) {
+      return { ok: true, reportSaved: false, backendSkipped: true };
+    }
+
+    try {
+      const response = await fetch("/api/trust-report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          target: {
+            eventId: event.id
+          },
+          report: {
+            reason: report.reason,
+            details: report.details,
+            reporterEmail: report.reporterEmail,
+            website: report.website || ""
+          }
+        })
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        return {
+          ok: false,
+          reportSaved: false,
+          ...result
+        };
+      }
+      return {
+        ok: true,
+        ...result
+      };
+    } catch (error) {
+      return { ok: false, reportSaved: false, error: "network_error" };
+    }
+  }
+
+  function trustReportErrorMessage(error) {
+    if (error === "rate_limited") return "Too many reports were submitted from this browser. Please wait a few minutes and try again.";
+    if (error === "invalid_email") return "Use a valid email address, or leave the email field blank.";
+    if (error === "missing_details") return "Add a few details so maintainers can review the concern.";
+    if (error === "bot_detected") return "We could not submit this report. Please try again.";
+    return "We could not submit this report. Please try again.";
   }
 
   function submissionId(submission, index) {
@@ -567,11 +601,55 @@
     `;
   }
 
+  function trustReportMarkup(event) {
+    return `
+      <div class="report-panel">
+        <div class="report-panel-heading">
+          <div>
+            <h2>Report a concern</h2>
+            <p>Flag unsafe details, privacy issues, misleading information, abusive joins, or proof concerns.</p>
+          </div>
+          <button class="text-button" id="report-toggle" type="button" aria-expanded="false" aria-controls="trust-report-form">Open report form</button>
+        </div>
+        <form class="report-form" id="trust-report-form" hidden>
+          <label>
+            Concern type
+            <select name="reason" required>
+              <option value="">Choose one</option>
+              <option value="unsafe_event">Unsafe event</option>
+              <option value="privacy">Privacy issue</option>
+              <option value="wrong_or_misleading">Wrong or misleading information</option>
+              <option value="abusive_join">Abusive join or roster issue</option>
+              <option value="bad_proof">Proof concern</option>
+              <option value="other">Something else</option>
+            </select>
+          </label>
+          <label>
+            Your email, optional
+            <input name="reporterEmail" type="email" autocomplete="email">
+          </label>
+          <label>
+            Details
+            <textarea name="details" rows="4" minlength="10" maxlength="4000" placeholder="What should maintainers review?" required></textarea>
+          </label>
+          <label class="bot-field" aria-hidden="true">
+            Website
+            <input name="website" type="text" autocomplete="off" tabindex="-1">
+          </label>
+          <p class="helper-text">Do not post private personal information in public issues. For urgent or sensitive concerns, contact the project owner privately through GitHub.</p>
+          <button class="button light-outline wide" type="submit">Send report</button>
+          <p class="form-note" id="trust-report-note" role="status"></p>
+        </form>
+      </div>
+    `;
+  }
+
   function renderEvent(event) {
     const count = event.participantCount + localJoinCount(event.id);
     const isCompleted = event.status === "completed";
     const existingJoin = currentJoin(event.id);
     const joined = Boolean(existingJoin);
+    const isFull = Boolean(event.maxParticipants && count >= event.maxParticipants && !joined);
     setEventMetadata(event);
 
     page.innerHTML = `
@@ -594,6 +672,8 @@
                 ? `<a class="button primary" href="#proof">See proof</a>`
                 : joined
                   ? `<a class="button primary" href="#join-confirmation">You're joining</a>`
+                  : isFull
+                    ? `<button class="button primary" type="button" disabled>Event full</button>`
                   : `<button class="button primary" id="join-trigger" type="button">I'm joining</button>`
             }
             <button class="button light-outline" id="share-event" type="button">Share</button>
@@ -660,6 +740,10 @@
                     Email
                     <input name="email" type="email" autocomplete="email" required>
                   </label>
+                  <label class="bot-field" aria-hidden="true">
+                    Website
+                    <input name="website" type="text" autocomplete="off" tabindex="-1">
+                  </label>
                   <fieldset class="choice-group">
                     <legend>Show my name publicly?</legend>
                     <label class="choice-option">
@@ -684,6 +768,7 @@
                 </div>
               `
           }
+          ${trustReportMarkup(event)}
         </div>
       </section>
     `;
@@ -698,8 +783,12 @@
     const participantSummaryNode = document.querySelector("#participant-summary");
     const publicJoinList = document.querySelector("#public-join-list");
     const joinConfirmation = document.querySelector("#join-confirmation");
+    const joinNote = document.querySelector("#join-note");
     const shareButton = document.querySelector("#share-event");
     const shareNote = document.querySelector("#share-note");
+    const reportToggle = document.querySelector("#report-toggle");
+    const reportForm = document.querySelector("#trust-report-form");
+    const reportNote = document.querySelector("#trust-report-note");
 
     if (joinTrigger && joinForm) {
       const account = window.BLUE_MOON_ACCOUNT ? window.BLUE_MOON_ACCOUNT.current() : null;
@@ -718,6 +807,14 @@
         let join = currentJoin(event.id);
         if (!hasJoined(event.id)) {
           const data = Object.fromEntries(new FormData(joinForm).entries());
+          if (data.website) {
+            if (joinNote) joinNote.textContent = joinErrorMessage("bot_detected");
+            return;
+          }
+          if (event.maxParticipants && event.participantCount + localJoinCount(event.id) >= event.maxParticipants) {
+            if (joinNote) joinNote.textContent = joinErrorMessage("event_full");
+            return;
+          }
           const joins = readJoins();
           join = {
             id: `join-${slugify(event.id)}-${Date.now()}`,
@@ -726,21 +823,30 @@
             email: data.email,
             visibility: data.visibility === "public" ? "public" : "private",
             reminderOptIn: data.reminderOptIn === "on",
+            website: "",
             receiptStatus: "ready",
             reminderStatus: data.reminderOptIn === "on" ? "requested" : "off",
             calendarUid: `${slugify(event.id)}-${Date.now()}@blue-moon`,
             createdAt: new Date().toISOString()
           };
-          joins.push(join);
-          writeJoins(joins);
+          if (joinNote) joinNote.textContent = site.backendEnabled ? "Saving your spot..." : "";
 
           const receiptResult = await sendJoinReceipt(event, join);
+          if (!receiptResult.ok && !receiptResult.joinSaved) {
+            if (joinNote) joinNote.textContent = joinErrorMessage(receiptResult.error);
+            return;
+          }
+
           join.receiptStatus = receiptResult.emailSent ? "sent" : "ready";
           join.emailMessageId = receiptResult.id || "";
-          writeJoins(readJoins().map((storedJoin) => {
-            if (storedJoin.id !== join.id) return storedJoin;
-            return join;
-          }));
+          join.backendJoinId = receiptResult.joinId || "";
+          joins.push(join);
+          writeJoins(joins);
+          if (joinNote && receiptResult.error) {
+            joinNote.textContent = joinErrorMessage(receiptResult.error);
+          } else if (joinNote) {
+            joinNote.textContent = "";
+          }
         }
 
         const count = event.participantCount + localJoinCount(event.id);
@@ -775,6 +881,56 @@
         } catch (error) {
           shareNote.textContent = "Share cancelled.";
         }
+      });
+    }
+
+    if (reportToggle && reportForm) {
+      reportToggle.addEventListener("click", () => {
+        const isOpening = reportForm.hidden;
+        reportForm.hidden = !isOpening;
+        reportToggle.setAttribute("aria-expanded", String(isOpening));
+        reportToggle.textContent = isOpening ? "Close report form" : "Open report form";
+        if (isOpening) reportForm.querySelector("select")?.focus();
+      });
+
+      reportForm.addEventListener("submit", async (submitEvent) => {
+        submitEvent.preventDefault();
+        const data = Object.fromEntries(new FormData(reportForm).entries());
+        if (data.website) {
+          if (reportNote) reportNote.textContent = trustReportErrorMessage("bot_detected");
+          return;
+        }
+
+        const report = {
+          id: `trust-report-${slugify(event.id)}-${Date.now()}`,
+          eventId: event.id,
+          eventTitle: event.title,
+          reason: data.reason,
+          details: data.details,
+          reporterEmail: data.reporterEmail,
+          website: "",
+          createdAt: new Date().toISOString()
+        };
+
+        if (reportNote) reportNote.textContent = site.backendEnabled ? "Submitting report..." : "";
+        const result = await sendTrustReport(event, report);
+        if (!result.ok) {
+          if (reportNote) reportNote.textContent = trustReportErrorMessage(result.error);
+          return;
+        }
+
+        if (result.reportSaved) {
+          if (reportNote) reportNote.textContent = "Report sent to the Blue Moon review queue.";
+        } else {
+          const reports = readTrustReports();
+          reports.push({
+            ...report,
+            backendStatus: result.reason || "local_demo"
+          });
+          writeTrustReports(reports);
+          if (reportNote) reportNote.textContent = "Report saved in this browser for the demo. For urgent or sensitive concerns, contact the project owner privately through GitHub.";
+        }
+        reportForm.reset();
       });
     }
   }

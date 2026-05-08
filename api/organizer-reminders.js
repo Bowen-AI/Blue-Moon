@@ -1,3 +1,5 @@
+import { requestMeta, respondJson } from "../lib/observability.js";
+
 function clean(value) {
   return String(value || "").trim();
 }
@@ -145,7 +147,7 @@ async function sendOrganizerEmail(event, participants, kind) {
 
   const data = await result.json().catch(() => ({}));
   if (!result.ok) {
-    return { sent: false, reason: "email_send_failed", detail: data };
+    return { sent: false, reason: "email_send_failed", status: result.status };
   }
   return { sent: true, id: data.id };
 }
@@ -167,16 +169,14 @@ async function sendDigestForRange(kind, range) {
 }
 
 export default async function handler(request, response) {
+  const meta = requestMeta(request, "api/organizer-reminders");
+
   if (request.method !== "GET" && request.method !== "POST") {
     response.setHeader("Allow", "GET, POST");
-    return response.status(405).json({ ok: false, error: "method_not_allowed" });
-  }
-
-  if (process.env.CRON_SECRET) {
-    const auth = request.headers.authorization || "";
-    if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
-      return response.status(401).json({ ok: false, error: "unauthorized" });
-    }
+    return respondJson(response, 405, { ok: false, error: "method_not_allowed" }, {
+      ...meta,
+      event: "reminders.method_not_allowed"
+    });
   }
 
   const configured = process.env.SUPABASE_URL
@@ -185,20 +185,62 @@ export default async function handler(request, response) {
     && process.env.EMAIL_FROM;
 
   if (!configured) {
-    return response.status(202).json({
+    return respondJson(response, 202, {
       ok: true,
       sent: 0,
       reason: "reminders_not_configured"
+    }, {
+      ...meta,
+      event: "reminders.not_configured"
     });
   }
 
-  const dayBefore = await sendDigestForRange("day_before", dayRange(1));
-  const dayOf = await sendDigestForRange("day_of", dayRange(0));
+  const cronSecret = clean(process.env.CRON_SECRET);
+  if (!cronSecret) {
+    return respondJson(response, 503, {
+      ok: false,
+      error: "cron_secret_required"
+    }, {
+      ...meta,
+      event: "reminders.cron_secret_required"
+    });
+  }
+
+  const auth = request.headers.authorization || "";
+  if (auth !== `Bearer ${cronSecret}`) {
+    return respondJson(response, 401, { ok: false, error: "unauthorized" }, {
+      ...meta,
+      event: "reminders.unauthorized"
+    });
+  }
+
+  let dayBefore = [];
+  let dayOf = [];
+  try {
+    dayBefore = await sendDigestForRange("day_before", dayRange(1));
+    dayOf = await sendDigestForRange("day_of", dayRange(0));
+  } catch (error) {
+    return respondJson(response, 502, {
+      ok: false,
+      error: "reminder_digest_failed"
+    }, {
+      ...meta,
+      event: "reminders.digest_failed",
+      errorClass: error?.name || "Error"
+    });
+  }
+
   const results = [...dayBefore, ...dayOf];
 
-  return response.status(200).json({
+  return respondJson(response, 200, {
     ok: true,
     sent: results.filter((result) => result.sent).length,
     results
+  }, {
+    ...meta,
+    event: "reminders.completed",
+    sent: results.filter((result) => result.sent).length,
+    failed: results.filter((result) => !result.sent).length,
+    eventCount: results.length
   });
 }

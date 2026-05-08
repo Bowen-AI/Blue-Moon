@@ -17,6 +17,10 @@ Open an issue here:
 
 https://github.com/Bowen-AI/Blue-Moon/issues
 
+Use [docs/TRUST_AND_SAFETY.md](docs/TRUST_AND_SAFETY.md) for the supported event scope, review policy, privacy expectations, and operator escalation playbooks.
+
+Do not include participant emails, reporter emails, private roster data, bearer tokens, API keys, or raw provider errors in public issues. For urgent safety or privacy concerns, open the issue with non-sensitive context first, then move details to a private maintainer channel when one exists.
+
 ## Sponsor Or Donate
 
 Sponsorship helps cover hosting, email tooling, design, moderation, accessibility work, and real-world community testing.

@@ -152,6 +152,64 @@
       .replaceAll("'", "&#039;");
   }
 
+  async function sendEarlyAccessRequest(data) {
+    if (!site.backendEnabled) {
+      return { ok: true, requestSaved: false, notificationSent: false, backendSkipped: true };
+    }
+
+    try {
+      const response = await fetch("/api/early-access", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          waitlist: {
+            name: data.name,
+            email: data.email,
+            interest: data.interest,
+            website: data.website || ""
+          }
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        return {
+          ok: false,
+          requestSaved: false,
+          notificationSent: false,
+          ...result
+        };
+      }
+      return {
+        ok: true,
+        ...result
+      };
+    } catch (error) {
+      return { ok: false, requestSaved: false, notificationSent: false, error: "network_error" };
+    }
+  }
+
+  function earlyAccessMessage(result) {
+    if (result.requestSaved && result.notificationSent) {
+      return "You're on the early access list. The Blue Moon team has been notified.";
+    }
+    if (result.requestSaved) {
+      return "You're on the early access list. The Blue Moon team can see it in Supabase.";
+    }
+    return "You're on the early access list in this browser.";
+  }
+
+  function earlyAccessErrorMessage(error) {
+    if (error === "duplicate_request") return "That email is already on the early access list.";
+    if (error === "rate_limited") return "Too many early access requests. Please wait a few minutes and try again.";
+    if (error === "invalid_email") return "Use a valid email address.";
+    if (error === "invalid_interest") return "Choose how you want to use Blue Moon.";
+    if (error === "missing_name") return "Add your name before joining early access.";
+    if (error === "bot_detected") return "We could not save this request. Please try again.";
+    return "We could not save this request. Please try again.";
+  }
+
   function localJoinCount(eventId) {
     return readStored(storage.joins).filter((join) => join.eventId === eventId).length;
   }
@@ -677,7 +735,7 @@
       title.textContent = submission.title;
 
       const detail = document.createElement("span");
-      const sourceLabel = submission.source === "org" ? "approved organization" : "one-off event";
+      const sourceLabel = submission.source === "org" ? "approved organization" : "one-off prototype event";
       const capacityLabel = submission.maxParticipants ? `capacity ${submission.maxParticipants}` : "";
       const locationLabel = [
         submission.location,
@@ -689,7 +747,7 @@
         locationLabel,
         capacityLabel,
         sourceLabel,
-        "listed now"
+        submission.source === "org" ? "listed now" : "listed in this browser"
       ].filter(Boolean).join(" · ");
 
       const link = document.createElement("a");
@@ -986,30 +1044,9 @@
       const detail = document.createElement("span");
       detail.textContent = organization.status === "approved"
         ? `${organization.contactName} · approved · can create events`
-        : `${organization.contactName} · pending approval`;
+        : `${organization.contactName} · pending maintainer review`;
 
       item.append(title, detail);
-
-      if (organization.status !== "approved") {
-        const button = document.createElement("button");
-        button.className = "text-button";
-        button.type = "button";
-        button.textContent = "Approve organization";
-        button.addEventListener("click", () => {
-          const updated = readStored(storage.organizations).map((candidate) => {
-            if (candidate.id !== organization.id) return candidate;
-            return {
-              ...candidate,
-              status: "approved",
-              approvedAt: new Date().toISOString()
-            };
-          });
-          writeStored(storage.organizations, updated);
-          renderOrganizations();
-          setNote("#org-form-note", `${organization.name} is approved and can now create events.`);
-        });
-        item.append(button);
-      }
 
       list.append(item);
     });
@@ -1127,7 +1164,7 @@
       renderPastEventShowcase();
       setNote("#event-form-note", isOrgPost
         ? "Event created under the approved organization. People can browse and join it now."
-        : "Event created. People can browse and join it now.");
+        : "Event created in this browser. Production listings still need review before publishing.");
     });
   }
 
@@ -1145,7 +1182,7 @@
       writeStored(storage.organizations, organizations);
       orgForm.reset();
       renderOrganizations();
-      setNote("#org-form-note", "Organization created. It is waiting for approval.");
+      setNote("#org-form-note", "Organization review requested. A maintainer must approve it before official posting.");
     });
   }
 
@@ -1179,17 +1216,29 @@
   document.addEventListener("click", handleShareButtonClick);
 
   if (waitlistForm) {
-    waitlistForm.addEventListener("submit", (event) => {
+    waitlistForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(waitlistForm).entries());
+      if (data.website) {
+        setNote("#waitlist-form-note", earlyAccessErrorMessage("bot_detected"));
+        return;
+      }
+      setNote("#waitlist-form-note", site.backendEnabled ? "Saving early access request..." : "");
+      const result = await sendEarlyAccessRequest(data);
+      if (!result.ok) {
+        setNote("#waitlist-form-note", earlyAccessErrorMessage(result.error));
+        return;
+      }
       const waitlist = readStored(storage.waitlist);
       waitlist.push({
         ...data,
+        backendStatus: result.requestSaved ? "saved" : result.reason || "local_demo",
+        notificationStatus: result.notificationSent ? "sent" : result.reason || "not_sent",
         createdAt: new Date().toISOString()
       });
       writeStored(storage.waitlist, waitlist);
       waitlistForm.reset();
-      setNote("#waitlist-form-note", "You are on the early access list.");
+      setNote("#waitlist-form-note", earlyAccessMessage(result));
     });
   }
 

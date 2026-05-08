@@ -366,6 +366,7 @@ h3 {
 .join-form,
 .join-confirmation,
 .participant-panel,
+.report-panel,
 .impact-panel {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -748,6 +749,14 @@ label {
   font-weight: 800;
 }
 
+.bot-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 input,
 select,
 textarea {
@@ -916,13 +925,34 @@ textarea:focus {
 }
 
 .participant-panel,
+.report-panel,
 .join-confirmation {
   padding: 24px;
 }
 
-.participant-panel {
+.participant-panel,
+.report-panel,
+.report-form {
   display: grid;
   gap: 14px;
+}
+
+.report-panel-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.report-panel-heading p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.report-form {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
 }
 
 .participant-summary {
@@ -1243,6 +1273,10 @@ textarea:focus {
 
   .event-hero-content h1 {
     font-size: 42px;
+  }
+
+  .report-panel-heading {
+    display: grid;
   }
 
   .member-profile-hero h1 {
