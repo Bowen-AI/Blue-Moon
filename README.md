@@ -210,7 +210,7 @@ The reminder endpoint refuses to send configured roster emails unless `CRON_SECR
 
 ## SEO URL
 
-SEO files currently use `https://blue-moon.vercel.app` as the production URL in:
+SEO files currently use `https://bluemoonbeige.vercel.app` as the production URL in:
 
 - `site.js`
 - `sitemap.xml`

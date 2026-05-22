@@ -6,8 +6,10 @@
   const trustReportsStorageKey = "blueMoonTrustReports";
   const site = window.BLUE_MOON_SITE || {
     name: "Blue Moon",
-    url: "https://blue-moon.vercel.app",
-    description: "Blue Moon helps people find, create, join, and share local events for doing good.",
+    searchName: "Blue Moon Beige",
+    alternateNames: ["Blue Moon Beige", "BlueMoon Beige", "bluemoon beige"],
+    url: "https://bluemoonbeige.vercel.app",
+    description: "Blue Moon Beige helps people find, create, join, and share local Blue Moon events for doing good.",
     image: "",
     backendEnabled: false
   };
@@ -242,7 +244,7 @@
   }
 
   function setEventMetadata(event) {
-    const title = `${event.title} | Blue Moon`;
+    const title = `${event.title} | ${site.searchName || site.name || "Blue Moon"}`;
     const description = event.summary || event.description || site.description;
     const url = eventAbsoluteUrl(event);
     document.title = title;
@@ -253,11 +255,11 @@
     setMeta("property", "og:description", description);
     setMeta("property", "og:url", url);
     setMeta("property", "og:image", event.imageUrl || site.image);
-    setMeta("property", "og:image:alt", event.imageAlt || `${event.title} on Blue Moon`);
+    setMeta("property", "og:image:alt", event.imageAlt || `${event.title} on ${site.searchName || site.name || "Blue Moon"}`);
     setMeta("name", "twitter:title", title);
     setMeta("name", "twitter:description", description);
     setMeta("name", "twitter:image", event.imageUrl || site.image);
-    setMeta("name", "twitter:image:alt", event.imageAlt || `${event.title} on Blue Moon`);
+    setMeta("name", "twitter:image:alt", event.imageAlt || `${event.title} on ${site.searchName || site.name || "Blue Moon"}`);
     injectJsonLd("blue-moon-event-structured-data", eventStructuredData(event));
   }
 

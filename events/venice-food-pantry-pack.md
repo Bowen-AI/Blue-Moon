@@ -4,7 +4,7 @@ Category: Food help
 
 Status: published
 
-URL: https://blue-moon.vercel.app/events/venice-food-pantry-pack
+URL: https://bluemoonbeige.vercel.app/events/venice-food-pantry-pack
 
 Location: Oakwood Recreation Center, Los Angeles, CA 90291
 

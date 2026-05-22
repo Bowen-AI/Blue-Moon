@@ -4,7 +4,7 @@ Category: Community garden
 
 Status: published
 
-URL: https://blue-moon.vercel.app/events/echo-park-garden-morning
+URL: https://bluemoonbeige.vercel.app/events/echo-park-garden-morning
 
 Location: Lemoyne Street Community Garden, Los Angeles, CA 90026
 

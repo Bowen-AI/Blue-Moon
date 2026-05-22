@@ -1,14 +1,15 @@
-# Blue Moon Full AI Context
+# Blue Moon Beige Full AI Context
 
-Blue Moon is a social event platform where people organize, join, complete, and share small real-world acts of good. The first product is intentionally lightweight: no marketplace, no payments, no nonprofit infrastructure, no native app, and no complex volunteer approvals for one-off community events.
+Blue Moon Beige is the search-friendly name for Blue Moon, a social event platform where people organize, join, complete, and share small real-world acts of good. The first product is intentionally lightweight: no marketplace, no payments, no nonprofit infrastructure, no native app, and no complex volunteer approvals for one-off community events.
 
 ## Positioning
 
 Name: Blue Moon
+Search name: Blue Moon Beige
 
 Tagline: Once in a blue moon, do something good.
 
-Summary: Blue Moon helps people find, create, join, and share local events for cleanups, food help, community gardens, tree planting, and neighborhood support.
+Summary: Blue Moon Beige helps people find, create, join, and share local Blue Moon events for cleanups, food help, community gardens, tree planting, and neighborhood support.
 
 Desired feeling: Meetup for doing good, with the emotional reward of Strava.
 
@@ -31,18 +32,18 @@ After joining, the product supports public or private join visibility, a confirm
 
 ## Public Crawl Entry Points
 
-- Home: https://blue-moon.vercel.app/
-- Events JSON: https://blue-moon.vercel.app/events.json
-- Sitemap: https://blue-moon.vercel.app/sitemap.xml
-- Robots: https://blue-moon.vercel.app/robots.txt
-- Manifest: https://blue-moon.vercel.app/site.webmanifest
-- Favicon: https://blue-moon.vercel.app/favicon.svg
+- Home: https://bluemoonbeige.vercel.app/
+- Events JSON: https://bluemoonbeige.vercel.app/events.json
+- Sitemap: https://bluemoonbeige.vercel.app/sitemap.xml
+- Robots: https://bluemoonbeige.vercel.app/robots.txt
+- Manifest: https://bluemoonbeige.vercel.app/site.webmanifest
+- Favicon: https://bluemoonbeige.vercel.app/favicon.svg
 
 ## Current Seed Events
 
 ### Santa Monica Beach Cleanup
 
-URL: https://blue-moon.vercel.app/events/santa-monica-beach-cleanup
+URL: https://bluemoonbeige.vercel.app/events/santa-monica-beach-cleanup
 
 Category: Beach cleanup
 
@@ -62,7 +63,7 @@ Current joining count: 12
 
 ### Echo Park Garden Morning
 
-URL: https://blue-moon.vercel.app/events/echo-park-garden-morning
+URL: https://bluemoonbeige.vercel.app/events/echo-park-garden-morning
 
 Category: Community garden
 
@@ -82,7 +83,7 @@ Current joining count: 7
 
 ### Venice Food Pantry Pack
 
-URL: https://blue-moon.vercel.app/events/venice-food-pantry-pack
+URL: https://bluemoonbeige.vercel.app/events/venice-food-pantry-pack
 
 Category: Food help
 
@@ -102,7 +103,7 @@ Current joining count: 16
 
 ### Palisades Park Cleanup
 
-URL: https://blue-moon.vercel.app/events/palisades-park-proof
+URL: https://bluemoonbeige.vercel.app/events/palisades-park-proof
 
 Category: Park cleanup
 

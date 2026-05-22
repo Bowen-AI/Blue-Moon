@@ -2,8 +2,10 @@
   const page = document.querySelector("#member-page");
   const site = window.BLUE_MOON_SITE || {
     name: "Blue Moon",
-    url: "https://blue-moon.vercel.app",
-    description: "Blue Moon helps people find, create, join, and share local events for doing good.",
+    searchName: "Blue Moon Beige",
+    alternateNames: ["Blue Moon Beige", "BlueMoon Beige", "bluemoon beige"],
+    url: "https://bluemoonbeige.vercel.app",
+    description: "Blue Moon Beige helps people find, create, join, and share local Blue Moon events for doing good.",
     image: ""
   };
 
@@ -86,8 +88,9 @@
   }
 
   function setProfileMetadata(profile, roleLabel) {
-    const title = `${profile.name} | Blue Moon`;
-    const description = `${profile.name} has joined ${profile.stats.joinedCount} events, organized ${profile.stats.organizedCount} events, and completed ${profile.stats.completedCount} good actions on Blue Moon.`;
+    const siteName = site.searchName || site.name || "Blue Moon";
+    const title = `${profile.name} | ${siteName}`;
+    const description = `${profile.name} has joined ${profile.stats.joinedCount} events, organized ${profile.stats.organizedCount} events, and completed ${profile.stats.completedCount} good actions on ${siteName}.`;
     const url = profileUrl(profile);
     document.title = title;
     setCanonical(url);

@@ -167,6 +167,37 @@ function checkTrustSafetyUxContract() {
   assert.ok(eventPage.includes("blueMoonTrustReports"), "event pages should preserve local demo report submissions");
 }
 
+function checkSeoMetadata() {
+  const verification = '<meta name="google-site-verification" content="NwJpwhXA1G-YpV--g6VyNhiFM9226IUPxmlSFHf_dKI">';
+  const index = readFileSync(path.join(root, "index.html"), "utf8");
+  const event = readFileSync(path.join(root, "event.html"), "utf8");
+  const member = readFileSync(path.join(root, "member.html"), "utf8");
+  const robots = readFileSync(path.join(root, "robots.txt"), "utf8");
+  const sitemap = readFileSync(path.join(root, "sitemap.xml"), "utf8");
+
+  [index, event, member].forEach((html) => {
+    assert.ok(html.includes(verification), "entry HTML should include the Google Search Console verification tag");
+  });
+
+  assert.match(index, /<title>Blue Moon Beige \| Local good-action events<\/title>/);
+  assert.match(index, /<h1>Blue Moon Beige<\/h1>/);
+  assert.match(event, /<title>Blue Moon Beige Event<\/title>/);
+  assert.match(member, /<title>Blue Moon Beige Member<\/title>/);
+  assert.match(index, /<link rel="canonical" href="https:\/\/bluemoonbeige\.vercel\.app\/">/);
+  assert.match(index, /<link rel="alternate" hreflang="x-default" href="https:\/\/bluemoonbeige\.vercel\.app\/">/);
+  const structuredDataMatch = index.match(/<script id="blue-moon-structured-data" type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/);
+  assert.ok(structuredDataMatch, "home page should include source-visible JSON-LD");
+  const structuredData = JSON.parse(structuredDataMatch[1]);
+  assert.equal(structuredData[0]["@type"], "WebSite");
+  assert.equal(structuredData[0].name, "Blue Moon Beige");
+  assert.ok(structuredData[0].alternateName.includes("bluemoon beige"));
+  assert.equal(structuredData[1]["@type"], "Organization");
+  assert.ok(structuredData[1].alternateName.includes("Blue Moon Beige"));
+  assert.match(robots, /Sitemap: https:\/\/bluemoonbeige\.vercel\.app\/sitemap\.xml/);
+  assert.match(sitemap, /<loc>https:\/\/bluemoonbeige\.vercel\.app\/<\/loc>/);
+  assert.match(sitemap, /<lastmod>2026-05-22<\/lastmod>/);
+}
+
 function checkBackendContractFiles() {
   const migrationFile = "supabase/migrations/202605080001_ga_schema.sql";
   const seedFile = "supabase/seed.sql";
@@ -1197,6 +1228,7 @@ async function checkReminderApi() {
 checkSyntaxAndJson();
 checkEventInventory();
 checkTrustSafetyUxContract();
+checkSeoMetadata();
 checkBackendContractFiles();
 await checkJoinApi();
 await checkHealthApi();

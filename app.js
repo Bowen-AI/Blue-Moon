@@ -30,8 +30,10 @@
   const showcasePanels = Array.from(document.querySelectorAll("[data-showcase-panel]"));
   const site = window.BLUE_MOON_SITE || {
     name: "Blue Moon",
-    url: "https://blue-moon.vercel.app",
-    description: "Blue Moon helps people find, create, join, and share local events for doing good.",
+    searchName: "Blue Moon Beige",
+    alternateNames: ["Blue Moon Beige", "BlueMoon Beige", "bluemoon beige"],
+    url: "https://bluemoonbeige.vercel.app",
+    description: "Blue Moon Beige helps people find, create, join, and share local Blue Moon events for doing good.",
     image: "",
     backendEnabled: false
   };
@@ -549,7 +551,8 @@
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        name: site.name,
+        name: site.searchName || site.name,
+        alternateName: site.alternateNames || [site.name],
         url: site.url,
         description: site.description,
         image: site.image,
@@ -559,6 +562,7 @@
         "@context": "https://schema.org",
         "@type": "Organization",
         name: site.name,
+        alternateName: site.alternateNames || undefined,
         url: site.url,
         logo: site.icon,
         slogan: site.tagline,
@@ -567,8 +571,8 @@
       {
         "@context": "https://schema.org",
         "@type": "Dataset",
-        name: "Blue Moon public event data",
-        description: "Machine-readable seed event data for the Blue Moon static MVP.",
+        name: "Blue Moon Beige public event data",
+        description: "Machine-readable seed event data for the Blue Moon Beige static MVP.",
         url: site.eventsJson,
         license: `${site.url}/SUPPORT.md`,
         creator: {
@@ -580,7 +584,7 @@
       {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        name: "Blue Moon local events for doing good",
+        name: "Blue Moon Beige local events for doing good",
         itemListElement: seedEvents.map((event, index) => ({
           "@type": "ListItem",
           position: index + 1,

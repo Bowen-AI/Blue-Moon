@@ -24,4 +24,4 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
-Sitemap: https://blue-moon.vercel.app/sitemap.xml
+Sitemap: https://bluemoonbeige.vercel.app/sitemap.xml

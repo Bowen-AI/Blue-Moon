@@ -93,11 +93,11 @@ function formatTimeLabel(value, timeZone) {
 }
 
 function eventUrl(value, eventId) {
-  const fallback = `https://blue-moon.vercel.app/events/${encodeURIComponent(eventId)}`;
+  const fallback = `https://bluemoonbeige.vercel.app/events/${encodeURIComponent(eventId)}`;
   try {
     const url = new URL(clean(value, MAX.url));
     if (!["http:", "https:"].includes(url.protocol)) return fallback;
-    if (!["blue-moon.vercel.app", "localhost", "127.0.0.1"].includes(url.hostname)) return fallback;
+    if (!["bluemoonbeige.vercel.app", "localhost", "127.0.0.1"].includes(url.hostname)) return fallback;
     if (!url.pathname.includes(`/events/${eventId}`)) return fallback;
     return url.toString();
   } catch (error) {
@@ -422,7 +422,7 @@ function calendarAttachment(event, join, joinId) {
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${escapeIcs(`${safeTagValue(joinId || join.id, "join")}@blue-moon.vercel.app`)}`,
+    `UID:${escapeIcs(`${safeTagValue(joinId || join.id, "join")}@bluemoonbeige.vercel.app`)}`,
     `DTSTAMP:${formatIcsDate(new Date())}`,
     `DTSTART:${formatIcsDate(start)}`,
     `DTEND:${formatIcsDate(end)}`,

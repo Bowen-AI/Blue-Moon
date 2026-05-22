@@ -4,7 +4,7 @@ Category: Park cleanup
 
 Status: completed
 
-URL: https://blue-moon.vercel.app/events/palisades-park-proof
+URL: https://bluemoonbeige.vercel.app/events/palisades-park-proof
 
 Location: Palisades Park, Ocean Avenue, Santa Monica, CA 90402
 

@@ -1,7 +1,7 @@
 {
   "name": "Blue Moon",
   "short_name": "Blue Moon",
-  "description": "Find, create, join, and share local events for doing good.",
+  "description": "Blue Moon Beige helps people find, create, join, and share local events for doing good.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

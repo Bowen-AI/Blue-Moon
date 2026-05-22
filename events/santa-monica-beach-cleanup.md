@@ -4,7 +4,7 @@ Category: Beach cleanup
 
 Status: published
 
-URL: https://blue-moon.vercel.app/events/santa-monica-beach-cleanup
+URL: https://bluemoonbeige.vercel.app/events/santa-monica-beach-cleanup
 
 Location: Tower 24, Santa Monica Beach, Santa Monica, CA 90401
 

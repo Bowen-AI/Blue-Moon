@@ -1,26 +1,26 @@
-# Blue Moon
+# Blue Moon Beige
 
-> Blue Moon is a lightweight social event platform for finding, creating, joining, completing, and sharing small real-world good actions.
+> Blue Moon Beige is the search-friendly name for Blue Moon, a lightweight social event platform for finding, creating, joining, completing, and sharing small real-world good actions.
 
-Blue Moon is currently a static-first MVP for cleanups, food help, community gardens, tree planting, and neighborhood support. The core behavior being tested is simple: see a good action, join or create it, do it, post proof, and inspire the next person.
+Blue Moon Beige is currently a static-first MVP for cleanups, food help, community gardens, tree planting, and neighborhood support. The core behavior being tested is simple: see a good action, join or create it, do it, post proof, and inspire the next person.
 
 Public event pages are designed for people. For agents, the cleanest data source is the JSON event index.
 
 ## Core Resources
 
-- [Home](https://blue-moon.vercel.app/): Main landing page with event search, create-event flow, organization flow, account demo, and showcase.
-- [Home Markdown](https://blue-moon.vercel.app/index.html.md): Clean Markdown mirror of the homepage for AI agents.
-- [Events JSON](https://blue-moon.vercel.app/events.json): Machine-readable list of seeded public events.
-- [Sitemap](https://blue-moon.vercel.app/sitemap.xml): Search crawler URL list.
-- [Robots](https://blue-moon.vercel.app/robots.txt): Public crawl policy.
-- [Full AI Context](https://blue-moon.vercel.app/llms-full.txt): Longer Markdown summary for AI agents and retrieval systems.
+- [Home](https://bluemoonbeige.vercel.app/): Main landing page with event search, create-event flow, organization flow, account demo, and showcase.
+- [Home Markdown](https://bluemoonbeige.vercel.app/index.html.md): Clean Markdown mirror of the homepage for AI agents.
+- [Events JSON](https://bluemoonbeige.vercel.app/events.json): Machine-readable list of seeded public events.
+- [Sitemap](https://bluemoonbeige.vercel.app/sitemap.xml): Search crawler URL list.
+- [Robots](https://bluemoonbeige.vercel.app/robots.txt): Public crawl policy.
+- [Full AI Context](https://bluemoonbeige.vercel.app/llms-full.txt): Longer Markdown summary for AI agents and retrieval systems.
 
 ## Event Pages
 
-- [Santa Monica Beach Cleanup](https://blue-moon.vercel.app/events/santa-monica-beach-cleanup.md): Beach cleanup in Santa Monica.
-- [Echo Park Garden Morning](https://blue-moon.vercel.app/events/echo-park-garden-morning.md): Community garden work in Los Angeles.
-- [Venice Food Pantry Pack](https://blue-moon.vercel.app/events/venice-food-pantry-pack.md): Food help in Venice.
-- [Palisades Park Cleanup](https://blue-moon.vercel.app/events/palisades-park-proof.md): Completed cleanup with proof.
+- [Santa Monica Beach Cleanup](https://bluemoonbeige.vercel.app/events/santa-monica-beach-cleanup.md): Beach cleanup in Santa Monica.
+- [Echo Park Garden Morning](https://bluemoonbeige.vercel.app/events/echo-park-garden-morning.md): Community garden work in Los Angeles.
+- [Venice Food Pantry Pack](https://bluemoonbeige.vercel.app/events/venice-food-pantry-pack.md): Food help in Venice.
+- [Palisades Park Cleanup](https://bluemoonbeige.vercel.app/events/palisades-park-proof.md): Completed cleanup with proof.
 
 ## Agent Notes
 

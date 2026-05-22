@@ -1,13 +1,13 @@
 {
-  "name": "Blue Moon",
-  "url": "https://blue-moon.vercel.app",
-  "description": "Blue Moon helps people find, create, join, and share local events for cleanups, food help, community gardens, tree planting, and neighborhood support.",
+  "name": "Blue Moon Beige",
+  "url": "https://bluemoonbeige.vercel.app",
+  "description": "Blue Moon Beige helps people find, create, join, and share local Blue Moon events for cleanups, food help, community gardens, tree planting, and neighborhood support.",
   "updated": "2026-05-07",
   "license": "Open-source project; see repository files for the final project license.",
   "events": [
     {
       "id": "santa-monica-beach-cleanup",
-      "url": "https://blue-moon.vercel.app/events/santa-monica-beach-cleanup",
+      "url": "https://bluemoonbeige.vercel.app/events/santa-monica-beach-cleanup",
       "title": "Santa Monica Beach Cleanup",
       "category": "Beach cleanup",
       "status": "published",
@@ -28,7 +28,7 @@
     },
     {
       "id": "echo-park-garden-morning",
-      "url": "https://blue-moon.vercel.app/events/echo-park-garden-morning",
+      "url": "https://bluemoonbeige.vercel.app/events/echo-park-garden-morning",
       "title": "Echo Park Garden Morning",
       "category": "Community garden",
       "status": "published",
@@ -49,7 +49,7 @@
     },
     {
       "id": "venice-food-pantry-pack",
-      "url": "https://blue-moon.vercel.app/events/venice-food-pantry-pack",
+      "url": "https://bluemoonbeige.vercel.app/events/venice-food-pantry-pack",
       "title": "Venice Food Pantry Pack",
       "category": "Food help",
       "status": "published",
@@ -70,7 +70,7 @@
     },
     {
       "id": "palisades-park-proof",
-      "url": "https://blue-moon.vercel.app/events/palisades-park-proof",
+      "url": "https://bluemoonbeige.vercel.app/events/palisades-park-proof",
       "title": "Palisades Park Cleanup",
       "category": "Park cleanup",
       "status": "completed",
