@@ -82,6 +82,8 @@ function startStaticServer() {
       if (pathname === "/") pathname = "/index.html";
       if (/^\/events\/[^/]+$/.test(pathname)) pathname = "/event.html";
       if (/^\/members\/[^/]+$/.test(pathname)) pathname = "/member.html";
+      if (pathname === "/event") pathname = "/event.html";
+      if (pathname === "/member") pathname = "/member.html";
 
       const filePath = path.normalize(path.join(root, pathname));
       if (!filePath.startsWith(`${root}${path.sep}`)) {
@@ -465,6 +467,15 @@ async function main() {
       copyButton.click();
       await waitUntil(() => text("#share-status").includes("Proof link copied"), "proof copy status");
 
+      return true;
+    });
+
+    await navigate("/events/santa-monica-beach-cleanup", "#event-page");
+    await evaluateFlow(async (helpers) => {
+      const { assertBrowser, text } = helpers;
+
+      assertBrowser(text("#event-page").includes("Santa Monica Beach Cleanup"), "Clean event URL should render the selected event.");
+      assertBrowser(text("#event-page").includes("Example event"), "Seed event pages should be marked as examples.");
       return true;
     });
 

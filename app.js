@@ -422,7 +422,7 @@
 
   function eventHref(event) {
     if (isLocalHost()) return `event.html?id=${encodeURIComponent(event.id)}`;
-    return eventPath(event).slice(1);
+    return `/event?id=${encodeURIComponent(event.id)}`;
   }
 
   function eventAbsoluteUrl(event) {
@@ -621,6 +621,7 @@
             </a>
             <div class="event-card-body">
               <div class="card-meta">
+                ${event.source ? "" : "<span>Example event</span>"}
                 <span>${escapeHtml(event.category)}</span>
                 ${event.source === "org" ? "<span>Approved organization</span>" : ""}
                 ${event.source === "one-off" ? "<span>One-off event</span>" : ""}

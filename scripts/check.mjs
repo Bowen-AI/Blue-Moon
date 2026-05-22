@@ -174,6 +174,7 @@ function checkSeoMetadata() {
   const member = readFileSync(path.join(root, "member.html"), "utf8");
   const robots = readFileSync(path.join(root, "robots.txt"), "utf8");
   const sitemap = readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  const vercelConfig = JSON.parse(readFileSync(path.join(root, "vercel.json"), "utf8"));
 
   [index, event, member].forEach((html) => {
     assert.ok(html.includes(verification), "entry HTML should include the Google Search Console verification tag");
@@ -181,6 +182,8 @@ function checkSeoMetadata() {
 
   assert.match(index, /<title>Blue Moon Beige \| Local good-action events<\/title>/);
   assert.match(index, /<h1>Blue Moon Beige<\/h1>/);
+  assert.match(index, /<span class="example-flag">Example event<\/span>/);
+  assert.match(index, /href="\/event\?id=santa-monica-beach-cleanup"/);
   assert.match(event, /<title>Blue Moon Beige Event<\/title>/);
   assert.match(member, /<title>Blue Moon Beige Member<\/title>/);
   assert.match(index, /<link rel="canonical" href="https:\/\/bluemoonbeige\.vercel\.app\/">/);
@@ -196,6 +199,14 @@ function checkSeoMetadata() {
   assert.match(robots, /Sitemap: https:\/\/bluemoonbeige\.vercel\.app\/sitemap\.xml/);
   assert.match(sitemap, /<loc>https:\/\/bluemoonbeige\.vercel\.app\/<\/loc>/);
   assert.match(sitemap, /<lastmod>2026-05-22<\/lastmod>/);
+  assert.deepEqual(
+    vercelConfig.rewrites.slice(0, 2),
+    [
+      { source: "/events/:slug", destination: "/event?id=:slug" },
+      { source: "/members/:id", destination: "/member?id=:id" }
+    ],
+    "clean Vercel event/member URLs should rewrite to clean HTML routes with query ids"
+  );
 }
 
 function checkBackendContractFiles() {

@@ -661,6 +661,7 @@
         </div>
         <div class="event-hero-content">
           <div class="card-meta">
+            ${event.source ? "" : "<span>Example event</span>"}
             <span>${escapeHtml(event.category)}</span>
             ${event.source === "org" ? "<span>Approved organization</span>" : ""}
             ${event.source === "one-off" ? "<span>One-off event</span>" : ""}

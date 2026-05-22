@@ -111,7 +111,7 @@
   function memberHref(member) {
     const id = encodeURIComponent(memberId(member.email));
     const isLocal = ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
-    return isLocal ? `member.html?id=${id}` : `/members/${id}`;
+    return isLocal ? `member.html?id=${id}` : `/member?id=${id}`;
   }
 
   function members() {
