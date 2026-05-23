@@ -539,7 +539,7 @@
       <section class="section not-found">
         <p class="eyebrow dark">Event not found</p>
         <h1>This Blue Moon event link does not exist.</h1>
-        <a class="button primary" href="index.html#events">See upcoming events</a>
+        <a class="button primary" href="/#events">See upcoming events</a>
       </section>
     `;
   }

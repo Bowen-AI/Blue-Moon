@@ -172,6 +172,9 @@ function checkSeoMetadata() {
   const index = readFileSync(path.join(root, "index.html"), "utf8");
   const event = readFileSync(path.join(root, "event.html"), "utf8");
   const member = readFileSync(path.join(root, "member.html"), "utf8");
+  const eventPage = readFileSync(path.join(root, "event-page.js"), "utf8");
+  const memberPage = readFileSync(path.join(root, "member-page.js"), "utf8");
+  const memberUtils = readFileSync(path.join(root, "member-utils.js"), "utf8");
   const robots = readFileSync(path.join(root, "robots.txt"), "utf8");
   const sitemap = readFileSync(path.join(root, "sitemap.xml"), "utf8");
   const vercelConfig = JSON.parse(readFileSync(path.join(root, "vercel.json"), "utf8"));
@@ -186,6 +189,10 @@ function checkSeoMetadata() {
   assert.match(index, /href="\/event\?id=santa-monica-beach-cleanup"/);
   assert.match(event, /<title>Blue Moon Beige Event<\/title>/);
   assert.match(member, /<title>Blue Moon Beige Member<\/title>/);
+  assert.ok(eventPage.includes('href="/#events"'), "event not-found pages should link back to the root events section");
+  assert.ok(memberPage.includes('href="/#account"'), "member not-found pages should link back to the root account section");
+  assert.ok(memberPage.includes("window.location.pathname.match(/\\/members\\/([^/]+)/)"), "clean member URLs should be readable in the browser");
+  assert.ok(memberUtils.includes("return isLocal ? localPageHref(\"member.html\", id) : `/members/${encodeURIComponent(id)}`;"), "production member links should use the clean member route");
   assert.match(index, /<link rel="canonical" href="https:\/\/bluemoonbeige\.vercel\.app\/">/);
   assert.match(index, /<link rel="alternate" hreflang="x-default" href="https:\/\/bluemoonbeige\.vercel\.app\/">/);
   const structuredDataMatch = index.match(/<script id="blue-moon-structured-data" type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/);

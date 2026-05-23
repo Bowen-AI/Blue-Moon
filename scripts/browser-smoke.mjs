@@ -80,8 +80,8 @@ function startStaticServer() {
       const url = new URL(request.url, "http://127.0.0.1");
       let pathname = decodeURIComponent(url.pathname);
       if (pathname === "/") pathname = "/index.html";
-      if (/^\/events\/[^/]+$/.test(pathname)) pathname = "/event.html";
-      if (/^\/members\/[^/]+$/.test(pathname)) pathname = "/member.html";
+      if (/^\/events\/[^/]+$/.test(pathname) && !path.extname(pathname)) pathname = "/event.html";
+      if (/^\/members\/[^/]+$/.test(pathname) && !path.extname(pathname)) pathname = "/member.html";
       if (pathname === "/event") pathname = "/event.html";
       if (pathname === "/member") pathname = "/member.html";
 
@@ -380,6 +380,88 @@ async function main() {
     });
   }
 
+  async function auditCurrentPageInternalTargets(label) {
+    const broken = await evaluateFunction(async () => {
+      const blockedProtocols = /^(blob|data|javascript|mailto|sms|tel):/i;
+      const seen = new Set();
+      const targets = [];
+      const currentWithoutHash = new URL(window.location.href);
+      currentWithoutHash.hash = "";
+
+      function addTarget(node, attribute, type) {
+        const raw = node.getAttribute(attribute);
+        if (!raw || blockedProtocols.test(raw.trim())) return;
+
+        let url;
+        try {
+          url = new URL(raw, document.baseURI);
+        } catch (error) {
+          targets.push({ error: error.message, raw, type });
+          return;
+        }
+
+        if (url.origin !== window.location.origin) return;
+
+        const hash = url.hash;
+        url.hash = "";
+        const href = url.toString();
+        const key = `${type}:${href}:${hash}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        targets.push({ href, hash, raw, type });
+      }
+
+      [
+        ["a[href]", "href", "anchor"],
+        ["area[href]", "href", "area"],
+        ["form[action]", "action", "form"],
+        ["iframe[src]", "src", "iframe"],
+        ["img[src]", "src", "image"],
+        ["link[href]", "href", "link"],
+        ["script[src]", "src", "script"],
+        ["source[src]", "src", "source"],
+        ["audio[src]", "src", "audio"],
+        ["video[src]", "src", "video"]
+      ].forEach(([selector, attribute, type]) => {
+        document.querySelectorAll(selector).forEach((node) => addTarget(node, attribute, type));
+      });
+
+      const failures = [];
+      for (const target of targets) {
+        if (target.error) {
+          failures.push(target);
+          continue;
+        }
+
+        if (target.hash && target.href === currentWithoutHash.toString()) {
+          const id = decodeURIComponent(target.hash.slice(1));
+          if (id && !document.getElementById(id) && document.getElementsByName(id).length === 0) {
+            failures.push({ ...target, error: `Missing fragment target ${target.hash}` });
+          }
+        }
+
+        let response;
+        try {
+          response = await fetch(target.href, { cache: "no-store", method: "HEAD" });
+          if (response.status === 405) {
+            response = await fetch(target.href, { cache: "no-store", method: "GET" });
+          }
+        } catch (error) {
+          failures.push({ ...target, error: error.message });
+          continue;
+        }
+
+        if (!response.ok) {
+          failures.push({ ...target, status: response.status });
+        }
+      }
+
+      return failures;
+    });
+
+    assert.deepEqual(broken, [], `${label} should not expose broken internal links or assets.`);
+  }
+
   try {
     await cdp.ready;
     const { targetId } = await cdp.send("Target.createTarget", { url: "about:blank" });
@@ -469,6 +551,7 @@ async function main() {
 
       return true;
     });
+    await auditCurrentPageInternalTargets("home page");
 
     await navigate("/events/santa-monica-beach-cleanup", "#event-page");
     await evaluateFlow(async (helpers) => {
@@ -478,6 +561,7 @@ async function main() {
       assertBrowser(text("#event-page").includes("Example event"), "Seed event pages should be marked as examples.");
       return true;
     });
+    await auditCurrentPageInternalTargets("clean event page");
 
     await navigate("/event.html?id=santa-monica-beach-cleanup", "#event-page");
     await evaluateFlow(async (helpers) => {
@@ -516,6 +600,7 @@ async function main() {
 
       return true;
     });
+    await auditCurrentPageInternalTargets("event join page");
 
     await navigate("/index.html#account", "#account-dashboard");
     await evaluateFlow(async (helpers) => {
@@ -534,6 +619,34 @@ async function main() {
       assertBrowser(text("#member-page").includes("Santa Monica Beach Cleanup"), "Member profile should list joined event activity.");
       return true;
     });
+    await auditCurrentPageInternalTargets("member query page");
+
+    await navigate(`/members/${memberId("riley@example.com")}`, "#member-page");
+    await evaluateFlow(async (helpers) => {
+      const { assertBrowser, text, waitUntil } = helpers;
+      await waitUntil(() => text("#member-page").includes("Riley Stone"), "clean member profile");
+      assertBrowser(text("#member-page").includes("Santa Monica Beach Cleanup"), "Clean member URL should list joined event activity.");
+      return true;
+    });
+    await auditCurrentPageInternalTargets("clean member page");
+
+    await navigate("/events/not-a-real-event", "#event-page");
+    await evaluateFlow(async (helpers) => {
+      const { assertBrowser, text } = helpers;
+      assertBrowser(text("#event-page").includes("Event not found"), "Missing clean event URLs should render the not-found state.");
+      assertBrowser(Boolean(document.querySelector('a[href="/#events"]')), "Missing event links should return to the root events section.");
+      return true;
+    });
+    await auditCurrentPageInternalTargets("event not-found page");
+
+    await navigate(`/members/${memberId("missing@example.com")}`, "#member-page");
+    await evaluateFlow(async (helpers) => {
+      const { assertBrowser, text } = helpers;
+      assertBrowser(text("#member-page").includes("Member not found"), "Missing clean member URLs should render the not-found state.");
+      assertBrowser(Boolean(document.querySelector('a[href="/#account"]')), "Missing member links should return to the root account section.");
+      return true;
+    });
+    await auditCurrentPageInternalTargets("member not-found page");
 
     await navigate("/event.html?id=santa-monica-beach-cleanup", "#event-page");
     await evaluateFlow(async (helpers) => {

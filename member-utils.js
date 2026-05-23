@@ -102,16 +102,21 @@
     ];
   }
 
+  function localPageHref(pageName, id) {
+    const query = `?id=${encodeURIComponent(id)}`;
+    return window.location.protocol === "file:" ? `${pageName}${query}` : `/${pageName}${query}`;
+  }
+
   function eventHref(event) {
     const isLocal = ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
-    if (isLocal) return `event.html?id=${encodeURIComponent(event.id)}`;
+    if (isLocal) return localPageHref("event.html", event.id);
     return `/events/${encodeURIComponent(event.id)}`;
   }
 
   function memberHref(member) {
-    const id = encodeURIComponent(memberId(member.email));
+    const id = memberId(member.email);
     const isLocal = ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
-    return isLocal ? `member.html?id=${id}` : `/member?id=${id}`;
+    return isLocal ? localPageHref("member.html", id) : `/members/${encodeURIComponent(id)}`;
   }
 
   function members() {

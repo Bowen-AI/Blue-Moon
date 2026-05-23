@@ -20,7 +20,10 @@
 
   function memberIdFromLocation() {
     const params = new URLSearchParams(window.location.search);
-    return params.get("id") || "";
+    const fromQuery = params.get("id");
+    if (fromQuery) return fromQuery;
+    const match = window.location.pathname.match(/\/members\/([^/]+)/);
+    return match ? decodeURIComponent(match[1]) : "";
   }
 
   function activityItem(event, label) {
@@ -145,7 +148,7 @@
       <section class="section not-found">
         <p class="eyebrow dark">Member not found</p>
         <h1>This Blue Moon member page does not exist yet.</h1>
-        <a class="button primary" href="index.html#account">Look up members</a>
+        <a class="button primary" href="/#account">Look up members</a>
       </section>
     `;
   }
